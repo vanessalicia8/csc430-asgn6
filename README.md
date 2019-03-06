@@ -16,6 +16,6 @@ If you have Homebrew, you can easily install Erlang and Elixir with these comman
 
 (double-click Control C to exit)
 
-## To run this program:
+### To run this program:
 
 **elixir asgn6.exs**
