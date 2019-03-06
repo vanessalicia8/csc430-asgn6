@@ -6,7 +6,7 @@ Assignment 6: Elixir
 Some useful tips:
 If you have Homebrew, you can easily install Erlang and Elixir with these commands:
 
-brew install erlang
+*brew install erlang*
 
 brew install elixir
 
