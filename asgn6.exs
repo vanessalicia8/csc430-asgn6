@@ -42,7 +42,9 @@ defmodule Parser do
 						c_3 = parse(c3)
 						%IfC{con: c_1, den: c_2, els: c_3}
 					{:lam, args, body} ->
-						"lambda"
+						a = parse(args)
+						b = parse(body)
+						%LamC{params: a, body: b}
 					#{:var, 
 					_ -> "AppC, TODO"
 				end
@@ -55,23 +57,23 @@ end
 defmodule Tests do
 	def main do
 		s = Parser.parse(5)
-		if s != %NumC{n: s} do
-			"fails"
+		if s != %NumC{n: 5} do
+			IO.puts("fails")
 		end
 
 		s = Parser.parse(:hi)
-		if s != %IdC{sym: s} do
-			"fails"
+		if s != %IdC{sym: :hi} do
+			IO.puts("fails")
 		end
 
 		s = Parser.parse("hello")
-		if s != %StringC{str: s} do
-			"fails"
+		if s != %StringC{str: "hello"} do
+			IO.puts("fails")
 		end
 		
-		s = Parser.parse({1, 2, 3})
-		if s != %IfC{con: 1, den: 2, els: 3} do
-			"fails"
+		s = Parser.parse({:if, 1, 2, 3})
+		if s != %IfC{con: %NumC{n: 1}, den: %NumC{n: 2}, els: %NumC{n: 3}} do
+			IO.puts("fails")
 		end
 
 
@@ -82,8 +84,4 @@ end
 
 Tests.main
 
-
-
-#s = Parser.parse({1, 2, 3})
-#IO.puts(s)
 
