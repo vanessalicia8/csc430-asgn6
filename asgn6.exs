@@ -142,6 +142,5 @@ use ExUnit.Case, async: true
    end
 end
 
-Tests.main
 
 
