@@ -50,19 +50,19 @@ defmodule Parser do
 	       _ ->
 		      cond do
 		         elem(s, 0) == :var ->
-			        if tuple_size(s) > 1 do
-                       parse(desugar(s))
-			        else "ZHRL: var: invalid input"
-			        end
-		        tuple_size(s) > 1 ->
-                   s1 = Tuple.to_list(s)
-			       arg_list = tl(s1)
-                   f = parse(hd(s1))
-			       if is_list(arg_list) do
-			          a = Enum.map(arg_list, fn(x) -> parse(x) end)
-			          %AppC{fun: f, args: a}
-			      else "ZHRL: app: invalid input"
-		          end
+			    if tuple_size(s) > 1 do
+                       		parse(desugar(s))
+			    else "ZHRL: var: invalid input"
+			    end
+		         tuple_size(s) > 1 ->
+                   	    s1 = Tuple.to_list(s)
+			    arg_list = tl(s1)
+                   	    f = parse(hd(s1))
+			    if is_list(arg_list) do
+			       a = Enum.map(arg_list, fn(x) -> parse(x) end)
+			       %AppC{fun: f, args: a}
+			    else "ZHRL: app: invalid input"
+		            end
 		      end
 	       end
 	   true -> "ZHRL: invalid syntax"
