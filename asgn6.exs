@@ -130,24 +130,25 @@ defmodule Tests do
 		if s != %AppC{fun: %IdC{sym: :+}, args: [%IdC{sym: :y}, %NumC{n: 2}]} do
 			IO.puts("app fails")
 		end
-        
-        s1 = Parser.desugar({:var, [:y, :=, 98], {:+, :y, 2}})
-        if s1 != {{:lam, [:y], {:+, :y, 2}}, 98} do
-            IO.puts("desugar fail")
-        end
-        
-		s = Parser.parse({:var, [:y, :=, 98], {:+, :y, 2}})
-        #IO.puts(s)
-		if s != %AppC{fun: %LamC{body: %AppC{args: [%IdC{sym: :y}, %NumC{n: 2}], 
-        fun: %IdC{sym: :+}}, params: [%IdC{sym: :y}]},
-        args: [%NumC{n: 98}]} do
-			IO.puts("var fails")
-		end
-
+		
 		s = Parser.parse({:lam, 1, 2})
 		if s != "ZHRL: lam: invalid input" do
 			IO.puts("error case fail")
 		end
+        
+        	s1 = Parser.desugar({:var, [:y, :=, 98], {:+, :y, 2}})
+        	if s1 != {{:lam, [:y], {:+, :y, 2}}, 98} do
+            	IO.puts("desugar fail")
+        	end
+        
+		s = Parser.parse({:var, [:y, :=, 98], {:+, :y, 2}})
+		if s != %AppC{fun: %LamC{body: %AppC{args: [%IdC{sym: :y}, %NumC{n: 2}], 
+        	fun: %IdC{sym: :+}}, params: [%IdC{sym: :y}]},
+        	args: [%NumC{n: 98}]} do
+			IO.puts("var fails")
+		end
+
+		
 
 
 	end
