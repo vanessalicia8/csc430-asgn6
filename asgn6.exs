@@ -93,65 +93,53 @@ defmodule Parser do
 end
 
 #TESTS
+ExUnit.start()
 defmodule Tests do
-	def main do
-		#PARSE
-		s = Parser.parse(5)
-		if s != %NumC{n: 5} do
-			IO.puts("fails")
-		end
-	
-		s = Parser.parse(:hi)
-		if s != %IdC{sym: :hi} do
-			IO.puts("fails")
-		end
+use ExUnit.Case, async: true
+   test "parse numc" do
+      assert Parser.parse(5) == %NumC{n: 5}
+   end
+   test "parse idc" do
+      assert Parser.parse(:hi) == %IdC{sym: :hi}
+   end
+   test "parse stringc" do
+      assert Parser.parse("hello") == %StringC{str: "hello"}
+   end
+   test "parse ifc" do
+      assert Parser.parse({:if, 1, 2, 3}) == 
+	%IfC{con: %NumC{n: 1}, den: %NumC{n: 2}, els: %NumC{n: 3}}
+   end
+   test "parse lamc" do
+      assert Parser.parse({:lam, [1], 2}) == 
+	%LamC{params: [%NumC{n: 1}], body: %NumC{n: 2}}
+   end
 
-		s = Parser.parse("hello")
-		if s != %StringC{str: "hello"} do
-			IO.puts("fails")
-		end
-		
-		s = Parser.parse({:if, 1, 2, 3})
-		if s != %IfC{con: %NumC{n: 1}, den: %NumC{n: 2}, els: %NumC{n: 3}} do
-			IO.puts("fails")
-		end
+   test "parse appc" do
+      assert Parser.parse({:f, 2}) == 
+	%AppC{fun: %IdC{sym: :f}, args: [%NumC{n: 2}]}
+   end
 
-		s = Parser.parse({:lam, [1], 2})
-		if s != %LamC{params: [%NumC{n: 1}], body: %NumC{n: 2}} do
-			IO.puts("fails")
-		end
+   test "parse appc2" do
+      assert Parser.parse({:+, :y, 2}) == 
+	%AppC{fun: %IdC{sym: :+}, args: [%IdC{sym: :y}, %NumC{n: 2}]}
+   end
 
-		s = Parser.parse({:f, 2})
-		if s != %AppC{fun: %IdC{sym: :f}, args: [%NumC{n: 2}]} do
-			IO.puts("app fails")
-		end
+   test "desugar var" do
+      assert Parser.desugar({:var, [:y, :=, 98], {:+, :y, 2}}) == 
+	{{:lam, [:y], {:+, :y, 2}}, 98}
+   end
 
-		s = Parser.parse({:+, :y, 2})
-		if s != %AppC{fun: %IdC{sym: :+}, args: [%IdC{sym: :y}, %NumC{n: 2}]} do
-			IO.puts("app fails")
-		end
-		
-		s = Parser.parse({:lam, 1, 2})
-		if s != "ZHRL: lam: invalid input" do
-			IO.puts("error case fail")
-		end
-        
-        	s1 = Parser.desugar({:var, [:y, :=, 98], {:+, :y, 2}})
-        	if s1 != {{:lam, [:y], {:+, :y, 2}}, 98} do
-            	IO.puts("desugar fail")
-        	end
-        
-		s = Parser.parse({:var, [:y, :=, 98], {:+, :y, 2}})
-		if s != %AppC{fun: %LamC{body: %AppC{args: [%IdC{sym: :y}, %NumC{n: 2}], 
-        	fun: %IdC{sym: :+}}, params: [%IdC{sym: :y}]},
-        	args: [%NumC{n: 98}]} do
-			IO.puts("var fails")
-		end
+   test "parse var" do
+      assert Parser.parse({:var, [:y, :=, 98], {:+, :y, 2}}) == 
+	%AppC{fun: %LamC{body: %AppC{args: [%IdC{sym: :y}, %NumC{n: 2}], 
+        fun: %IdC{sym: :+}}, params: [%IdC{sym: :y}]},
+        args: [%NumC{n: 98}]}
+   end
 
-		
-
-
-	end
+   test "parse lam error" do
+      assert Parser.parse({:lam, 1, 2}) == 
+	"ZHRL: lam: invalid input"
+   end
 end
 
 Tests.main
